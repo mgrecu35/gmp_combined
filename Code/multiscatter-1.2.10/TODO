@@ -1,0 +1,31 @@
+
+Things to do:
+
+Interface
+ - Documentation
+ - Formalize Quickbeam interface
+
+Small-angle code
+ - Fix resolution-dependence in multiscatter_qsa.c
+ - Remove thread-unsafe aspects of H06 algorithm
+
+Wide-angle code
+ - Benchmark adjoint
+ - Polarization
+ - Doppler
+ - Make sure "-wide-angle-cutoff" for aerosols feeds through to
+   wide-angle part of code
+ - Check the spatial discretization of the ms_variance algorithm
+ - New ADonly functions for TDTS expansion
+ - Superluminal is an option
+ 
+Jacobians etc
+ - Do numerical Jacobian of wide-angle code with reduced resolution
+   for efficiency
+ - Do tangent linear model
+ * Adjoint of wide-angle with optimized gates
+ - Adjoint of wide-angle with interpolation
+
+
+
+

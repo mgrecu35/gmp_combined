@@ -1,0 +1,17 @@
+CC = gcc -std=c99
+#FC = /opt/intel/fc/9.1.041/bin/ifort
+FC = gfortran
+
+# If you use -DSINGLE_PRECISION, you will need to change real*8 to
+# real*4 in mainf.f
+
+#-DSINGLE_PRECISION
+WARNFLAGS = -Wall -g
+#OPTFLAGS = -O3 --fast-math
+OPTFLAGS = -O2 -fPIC
+#OPTFLAGS = -O0
+CFLAGS = $(WARNFLAGS) $(OPTFLAGS)
+FFLAGS = $(WARNFLAGS) $(OPTFLAGS)
+LIBS = -lm -L../lib -lmultiscatter -lm
+INCLUDES = -I../include
+

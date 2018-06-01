@@ -1,0 +1,14 @@
+from numpy import *
+import os
+cmd='./multiscatter -quiet -radar -hsrl -algorithms single tdts'+\
+    ' -quiet '+fname+' > out 2>&1'
+os.system(cmd)
+  
+datin=loadtxt('out')
+datin2=loadtxt('out2')
+Z=[]
+Z2=[]
+for i in range(datin.shape[0]):
+    Z.append(log10(datin[i,4]+1e-18)*10-dZ)
+   
+print Z 

@@ -1,0 +1,207 @@
+Multiscatter version 1.2.x
+September 2011
+Robin Hogan
+
+INTRODUCTION
+
+This package contains code for fast calculation of radar and lidar
+multiple scattering returns. It uses the photon variance-covariance
+(PVC) method for quasi-small-angle multiple scattering (lidar only)
+and the time-dependent two-stream (TDTS) method for wide-angle
+multiple scattering (radar and lidar).
+
+The algorithm is implemented in C. The file "src/multiscatter_ascii.c"
+illustrates how to call the algorithm from C. This program,
+(executable name "bin/multiscatter") reads ascii data from standard
+input and writes the calculated backscatter on standard output.
+Further information in the "include/multiscatter.h" file
+
+There is also a full Fortran interface: see the
+"include/multiscatter.inc" file as well as the
+"src/multiscatter_fortran_demo.f90" file.  The
+"include/multiscatter.inc" uses Fortran 2003 features.  If your
+compiler doesn't support these then include the
+"include/multiscatter77.inc" file instead - it shoulde then compile
+just fine, but will not be able to check that you are calling the
+functions and subroutines correctly.
+
+Output is in the form of apparent backscatter coefficient - to convert
+to apparent radar reflectivity factor, see Hogan and Battaglia (2008). 
+
+There are two versions of the PVC algorithm, an O(N^2) one described
+by Hogan (2006), and a faster O(N) one described by Hogan (2008) at
+the expense of a little accuracy. Both PVC algorithms have the
+capability of representing anisotropic phase functions in the near-180
+degree direction by specifying the droplet fraction and the pristine
+ice fraction at each gate.
+
+The purpose of this code is to be used as the "forward model" in
+retrieval algorithms, and in instrument simulators run on data from
+atmospheric numerical models.  
+
+For retrieval algorithms, one either need the Jacobian matrix to be
+computed (for Gauss-Newton schemes) or the adjoint vector (for
+quasi-Newton schemes). This code provides a numerical Jacobian (quite
+slow) and a fast adjoint.  A fast but approximate Jacobian is
+available for the PVC method only and was used successfully in the
+Delanoe and Hogan (2008) ice-cloud retrieval algorithm.
+
+Comments/queries/requests should be addressed to Robin Hogan
+<r.j.hogan@reading.ac.uk>.
+
+
+MAIN CHANGES SINCE VERSION 1.1.3
+
+1. The command-line options for the "multiscatter" program have
+changed: the algorithm is now controlled by "-algorithms
+<sa-algorithm> <wa-algorithm>", where <sa-algorithm> is one of "none",
+"single", "original", "fast", "explicit" or "lag" and <wa-algorithm>
+is one of "none", "tdts", "lidar" or "radar" (type "bin/multiscatter
+-help" for their meanings).  Thus options such as "-sa-only",
+"-single-only", "-wide-only" and "-no-forward-lobe" do not work any
+more.
+
+2. The default small-angle algorithm is now the O(N) method of Hogan
+(2008) rather than the O(N^2) method of Hogan (2006). 
+
+3. An adjoint code is now available for retrieval algorithms. This can
+be tested using the bin/multiscatter program with the "-check-adjoint"
+option.
+
+4. The format of the first line of the input file has changed to (1)
+number of range gates, (2) wavelength, (3) altitude, (4) transmitter
+divergence half-width, (5+) receiver half-widths. This change is to
+accommodate multiple field-of-view instruments.  Note the
+"-annular-detectors" option.  For the old behaviour, use the "-v1"
+option.
+
+5. A full Fortran interface is now available.
+
+6. Bug fixes to fast small-angle algorithm (search for "ERROR IN
+ORIGINAL CODE" in fast_small_angle.c); doesn't make too much
+difference.
+
+7. Change to the wide-angle algorithm to prevent (to a large extent)
+superluminal travel; this is done by cropping the tails of the
+Gaussian distribution that correspond to faster-than-light travel.  An
+additional option has been added to only start the wide-angle
+algorithm when the mean-free-path drops below some multiple of the
+receiver footprint; this way the slower wide-angle algorithm is not
+run on clouds where it would be insignificant compared to small-angle
+and single scattering.
+
+8. The code is now able to run on irregular grids: the
+single-scattering and fast small-angle algorithms were already
+intrinsically capable of being run on irregular grids, they just
+needed that flexibility to be coded in. The wide-angle algorithm now
+has interpolation to a regular grid, if required (note that there is
+no adjoint for this interpolation yet).
+
+
+COMPILING
+
+To compile, type "make" in the top-level directory.  The Makefile
+assumes you have GNU C (gcc) and GNU Fortran (gfortran).  Change
+compilers and compiler settings by editing "Makefile_include".  The
+executables are "bin/multiscatter" (the C version) and
+"bin/multiscatterf" and "bin/multiscatter_fortran_demo" (the Fortran
+versions). Typing "bin/multiscatter -help" will give you the format of
+the input and output data.
+
+
+TESTING
+
+A number of sample input files are provided in the examples
+directory. Older PVC-only input files are:
+  calipso_cirrus_aerosol_example.in
+  ground_based_cirrus_example.in
+Newer input files for cases used by Hogan and Battaglia (2008) to
+demonstrate the TDTS method are:
+  i3rc_lidar_exp1.in
+  i3rc_lidar_exp2.in
+  i3rc_lidar_exp3.in
+  i3rc_lidar_exp4.in
+  i3rc_lidar_exp5.in
+  i3rc_lidar_exp6.in
+  cloudsat_radar_scenario3.in
+Note that these are for one particular receiver field of view, which
+can be changed by editing the first data line in the files.
+
+Files for comparing the same profile with different resolution and
+regular versus irregular grids are
+  regular_profile.in
+  regular_profile2.in
+  irregular_profile.in
+See matlab_octave/compare_profiles.m for a matlab/octave script that
+runs the algorithm on these profiles and plots the result.
+
+Various profiles for benchmarking are available as
+  benchmark_profile*.in
+These include files that include backscatter adjoints (*_AD.in) and
+can be used to demonstrate the adjoint codes that output the adjoint
+of the extinction and other input variables.
+
+Note that the Fortran programs "bin/multiscatterf" and
+"bin/multiscatter_fortran_demo" will only work with files that have 10
+entries on each line after the first line.
+
+
+BENCHMARKING
+
+The code is fast, but when running the "multiscatter" executable there
+is the overhead of loading in the data, allocating internal arrays and
+outputing the results.  If the code is run multiple times in the same
+executable (as it would be in an operational retrieval algorithm being
+run on many rays of data) then these overheads would be minimized,
+since memory allocated in the first call of the algorithm is available
+in subsequent calls.  The simplest way to test the likely speed of the
+algorithm in an operational context is to run it many times on the
+same input profile.  This can be achieved by prefixing the unix
+command-line with "time ", and adding the "-repeat n" option to
+"multiscatter", where n is the number of times the algorithm will be
+run.  The "time" command will report the time it took to run the
+executable and this time should be divided by n to get the average
+time taken for one call to the algorithm.  Typically one should use n
+of 1000 or more.  Or you can use the "examples/benchmark.sh" script.
+
+
+COPYING
+
+This code is released under the conditions of the GNU Lesser General
+Public License - see the file "COPYING" for details.
+
+I would ask that any publications that use the code reference at least
+one of the first two papers below.  Please also let me know of uses
+and modifications to the code as I will be able to keep you updated on
+changes, bug-fixes, likely issues with particular applications of the
+code etc.
+
+
+REFERENCES
+
+All publications are available at
+http://www.met.rdg.ac.uk/clouds/publications.html or
+http://www.met.rdg.ac.uk/clouds/multiscatter.
+
+The PVC method is described in these papers:
+
+Hogan, R. J., 2006: Fast approximate calculation of multiply scattered
+lidar returns. Applied Optics, 45, 5984-5992
+
+Hogan, R. J., 2008: Fast lidar and radar multiple-scattering models:
+Part 1: Quasi-small-angle scattering using the photon
+variance-covariance method. J. Atmos. Sci., 65, 3621-3635.
+
+The TDTS method is described in this paper:
+
+Hogan, R. J., and A. Battaglia, 2008: Fast lidar and radar
+multiple-scattering models: Part 2: Wide-angle scattering using the
+time-dependent two-stream approximation. J. Atmos. Sci., 65, 3636-3651.
+
+An example of the use of the PVC method in a retrieval algorithm is
+given here:
+
+Delanoe, J., and R. J. Hogan, 2008: A variational scheme for
+retrieving ice cloud properties from combined radar, lidar and
+infrared radiometer. J. Geophys. Res., 113, D07204,
+doi:10.1029/2007JD009000.

@@ -1,0 +1,50 @@
+# This file contains an input profile of atmospheric properties for
+# the multiscatter code. The comand-line should be of the form:
+#   ./multiscatter [options] [input_file] > [output_file]
+# or
+#   ./multiscatter [options] < [input_file] > [output_file]
+# No options are necessary for this particular file.
+# The file format consists of any number of comment lines starting
+# with "#", followed by a line of 5 data values:
+#   1. number of points in profile
+#   2. instrument wavelength (m)
+#   3. instrument altitude (m)
+#   4. transmitter 1/e half-width (radians)
+#   5. receiver half-width (radians)
+#      (1/e half-width if the "-gaussian-receiver" option
+#       is specified, top-hat half-width otherwise)
+# The subsequent lines contain 4 or more elements:
+#   1. range above ground, starting with nearest point to instrument (m)
+#   2. extinction coefficient of cloud/aerosol only (m-1)
+#   3. equivalent-area particle radius of cloud/aerosol (m)
+#   4. extinction-to-backscatter ratio of cloud/aerosol (sterad)
+#   5. extinction coefficient of air (m-1) (default 0)
+#   6. single scattering albedo of cloud/aerosol
+#   7. scattering asymmetry factor of cloud/aerosol
+#   8. single scattering albedo of air (isotropic scattering)
+# Note that the last three elements correspond to the wide-angle
+# multiple-scattering calculation and if this is omitted then only
+# the quasi-small-angle multiple-scattering calculation is performed.
+# For more help on how to run the code, type:
+#   ./multiscatter -help
+20 5.32e-07 -1e+06 2.5e-09 0.0025
+  7.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+ 22.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+ 37.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+ 52.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+ 67.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+ 82.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+ 97.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+112.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+127.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+142.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+157.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+172.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+187.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+202.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+217.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+232.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+247.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+262.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 1 0
+277.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0
+292.5 0.04 1.19605e-05 19.4105 0 1 0.8634 1 0 0 0 0

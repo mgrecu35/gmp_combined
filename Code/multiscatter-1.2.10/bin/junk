@@ -1,0 +1,13 @@
+Instrument characteristics:
+   Wavelength: 0.00857 m
+   Gaussian transmitter pattern 1/e half-width: 0.0062173 radians
+   Number of fields-of-view: 1
+   Top-hat receiver pattern half-width(s) in radians: 0.0062173
+   Altitude: 400000 m
+   Distance to first gate: 380125 m
+   Receiver full-width footprint at first gate: 4726.71 m
+The output from the following algorithm(s) are summed:
+   Single scattering
+   Wide-angle scattering using time-dependent two-stream (TDTS) method assuming no forward lobe
+      Coherent backscatter enhancement: 1
+The backscatter due to particulates and air will be reported separately (e.g. for HSRL or Raman)

@@ -1,0 +1,7 @@
+from math import *
+
+lamb=0.00318979 
+kext=0.0003766
+S=15.9156
+back=kext/S
+Z=log10(back*lamb*3/pi**5*10.**18)
